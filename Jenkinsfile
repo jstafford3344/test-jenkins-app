@@ -54,9 +54,9 @@ pipeline {
                     }
                     steps {
                         sh '''
-                            npm install serve
+                            npm install serve wait-on
                             node_modules/.bin/serve -s build &
-                            sleep 15
+                            npx wait-on http://localhost:3000
                             npx playwright test --reporter=html
                         '''
                     }
