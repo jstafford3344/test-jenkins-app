@@ -12,11 +12,11 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn Jenkins on Udemy (JS)
+          Learn Jenkins on Udemy
         </a>
       </header>
       <p>
-          Application version: 1.0.0
+          Application version: {process.env.REACT_APP_VERSION}
       </p>
     </div>
   );
