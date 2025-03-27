@@ -156,7 +156,7 @@ pipeline {
             }
 
             environment {
-                CI_ENVIRONMENT_URL = 'YOUR NETLIFY URL'
+                CI_ENVIRONMENT_URL = 'https://voluble-crisp-cdda6e.netlify.app/'
             }
 
             steps {
