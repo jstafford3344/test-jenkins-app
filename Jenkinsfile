@@ -75,7 +75,7 @@ pipeline {
             }
         }
 
-        stage('Deploy staging') {
+        stage('Deploy Staging') {
             agent {
                 docker {
                     image 'node:18-alpine'
@@ -129,7 +129,7 @@ pipeline {
             }
         }
 
-        stage('Deploy prod') {
+        stage('Deploy Production') {
             agent {
                 docker {
                     image 'node:18-alpine'
