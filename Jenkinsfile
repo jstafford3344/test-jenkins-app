@@ -4,21 +4,9 @@ pipeline {
     environment {
         NETLIFY_SITE_ID = '98f84f3f-d7d4-4c52-b8e9-daae5ccc93d4'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
-        SAFE_WORKSPACE = '/var/jenkins_home/workspace/react_jenkins_app_2' // Renamed workspace path
     }
 
     stages {
-        stage('Prepare Workspace') {
-            steps {
-                sh '''
-                    # Rename workspace if needed
-                    mkdir -p $SAFE_WORKSPACE
-                    mv "$WORKSPACE" "$SAFE_WORKSPACE" || true
-                    ln -sfn "$SAFE_WORKSPACE" "$WORKSPACE"
-                '''
-            }
-        }
-
         stage('Build') {
             agent {
                 docker {
@@ -30,8 +18,6 @@ pipeline {
                 sh '''
                     node --version
                     npm --version
-                    npm cache clean --force
-                    rm -rf node_modules package-lock.json
                     npm ci
                     npm run build
                 '''
@@ -68,8 +54,8 @@ pipeline {
                     }
                     steps {
                         sh '''
-                            npm install -g serve
-                            serve -s build &
+                            npm install serve
+                            node_modules/.bin/serve -s build &
                             sleep 15
                             npx playwright test --reporter=html
                         '''
@@ -92,11 +78,19 @@ pipeline {
             }
             steps {
                 sh '''
-                    npm install -g netlify-cli
-                    netlify --version
-                    netlify status
-                    netlify deploy --dir=build
+                    npm install netlify-cli
+                    node_modules/.bin/netlify --version
+                    node_modules/.bin/netlify status
+                    node_modules/.bin/netlify deploy --dir=build
                 '''
+            }
+        }
+
+        stage('Approval') {
+            steps {
+                timeout(time: 15, unit: 'MINUTES') {
+                    input message: 'Do you wish to deploy to Production?', ok: 'Yes, I am sure'
+                }
             }
         }
 
@@ -109,10 +103,10 @@ pipeline {
             }
             steps {
                 sh '''
-                    npm install -g netlify-cli
-                    netlify --version
-                    netlify status
-                    netlify deploy --dir=build --prod
+                    npm install netlify-cli
+                    node_modules/.bin/netlify --version
+                    node_modules/.bin/netlify status
+                    node_modules/.bin/netlify deploy --dir=build --prod
                 '''
             }
         }
